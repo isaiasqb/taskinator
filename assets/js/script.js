@@ -103,22 +103,56 @@ var createTaskActions = function(taskId) {
 
 formEl.addEventListener("submit", taskFormHandler); //this targets the submit action of the forms button 
 
-// function to be triggered by clicking the main content area
+// function to be triggered by clicking the main content area only if the element clicked on is a button from an individual task
 var taskButtonHandler = function(event) {
-    console.log(event.target);
+    // get the target element from event
+    var targetEl = event.target
 
-    if (event.target.matches(".delete-btn")) {
+    // edit button was clicked
+    if (targetEl.matches(".edit-btn")) {
+        var taskId = targetEl.getAttribute("data-task-id");
+        editTask(taskId);
+    }
+
+    // delete button was clicked
+    if (targetEl.matches(".delete-btn")) {
         // get element's task id
-        var taskId = event.target.getAttribute("data-task-id");
-        deleteTask(taskId);
+        var taskId = targetEl.getAttribute("data-task-id");
+        deleteTask(taskId); 
     }
 };
 
+var editTask = function (taskId) {
+    //variable that references the entire <li> element. ets the <li> data-task-id value from the taskButtonHandler function
+    var taskSelected = document.querySelector(".task-item[data-task-id='" +taskId+"']");
+
+    //get the content from task-name <h3> element.
+    var taskName = taskSelected.querySelector("h3.task-name").textContent;
+    console.log(taskName);
+    //get the content from task-type <h3> element.
+    var taskType = taskSelected.querySelector("span.task-type").textContent;
+    console.log(taskType);
+
+    // reload the form with the information gathered form the list element
+    document.querySelector("input[name='task-name']").value = taskName;
+    document.querySelector("select[name='task-type']").value = taskType;
+
+    // change the message on the save button
+    document.querySelector("#save-task").textContent = "Save Task"; 
+
+    // add the taskId form the <li> to a data-task-id attribute on the form itself.
+    formEl.setAttribute("data-task-id", taskId);
+};
+
 var deleteTask = function(taskId) {
-    //we are selecting the entire li element that conntains the task information itself
-    var taskSelected = document.querySelector(".task-item[data-task-id='" +taskId+ "']");
-    console.log(taskSelected);
-}
+    //gets the <li> data-task-id value from the taskButtonHandler function and deletes the entire task
+    var taskSelected = document.querySelector(" .task-item[data-task-id='" +taskId+ "'] ");
+    taskSelected.remove();
+};
+
+
 
 // this targets the main area where the 3 lists are contained
 pageContentEl.addEventListener("click", taskButtonHandler);
+
+
