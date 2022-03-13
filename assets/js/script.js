@@ -1,5 +1,6 @@
 var taskIdCounter = 0;
 var formEl = document.querySelector("#task-form")
+var pageContentEl = document.querySelector("#page-content"); //this selects the main area where the 3 lists containers are
 var tasksToDoEl = document.querySelector("#tasks-to-do");
 
 
@@ -100,4 +101,24 @@ var createTaskActions = function(taskId) {
 };
 
 
-formEl.addEventListener("submit", taskFormHandler);
+formEl.addEventListener("submit", taskFormHandler); //this targets the submit action of the forms button 
+
+// function to be triggered by clicking the main content area
+var taskButtonHandler = function(event) {
+    console.log(event.target);
+
+    if (event.target.matches(".delete-btn")) {
+        // get element's task id
+        var taskId = event.target.getAttribute("data-task-id");
+        deleteTask(taskId);
+    }
+};
+
+var deleteTask = function(taskId) {
+    //we are selecting the entire li element that conntains the task information itself
+    var taskSelected = document.querySelector(".task-item[data-task-id='" +taskId+ "']");
+    console.log(taskSelected);
+}
+
+// this targets the main area where the 3 lists are contained
+pageContentEl.addEventListener("click", taskButtonHandler);
