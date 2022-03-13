@@ -31,13 +31,19 @@ var createTaskEl = function(taskDataObj) {
     // create a list item and style it with a class name
     var listItemEl = document.createElement("li");
     listItemEl.className = "task-item";
+
     // add task id as a custom attribute
     listItemEl.setAttribute("data-task-id", taskIdCounter);
+
     //create div to hold task info and add it inside of list item, give it a class
     var taskInfoEl = document.createElement("div");
     taskInfoEl.className = "task-info";
     taskInfoEl.innerHTML = "<h3 class='task-name'>" + taskDataObj.name + "</h3>" + "<span class='task-type'>"+ taskDataObj.type + "</span>";
     listItemEl.appendChild(taskInfoEl);
+
+    // this variable holds the creation of the "div" that contains the task actions 
+    var taskActionsEl = createTaskActions(taskIdCounter);
+    listItemEl.appendChild(taskActionsEl);
 
     // add the entire list item to the ul
     tasksToDoEl.appendChild(listItemEl);
@@ -47,9 +53,51 @@ var createTaskEl = function(taskDataObj) {
 };
 
 
-// var createTaskActions = fucntion(taskId) {
+var createTaskActions = function(taskId) {
+    // create a new div element to contain the actions for each task and assign custom class
+    var actionContainerEl = document.createElement("div");
+    actionContainerEl.className = "task-actions";
 
-// }
+    // create a button for editing the task & append it to the actionContainerEl
+    var editButtonEl = document.createElement("button");
+    editButtonEl.textContent = "Edit";
+    editButtonEl.className = "btn edit-btn";
+    editButtonEl.setAttribute("data-task-id", taskId);
+
+    actionContainerEl.appendChild(editButtonEl);
+
+    // create a button for deleting the task & append it to the actionContainerEl
+    var deleteButtonEl = document.createElement("button");
+    deleteButtonEl.textContent = "Delete";
+    deleteButtonEl.className = "btn delete-btn";
+    deleteButtonEl.setAttribute("data-task-id", taskId);
+
+    actionContainerEl.appendChild(deleteButtonEl);
+
+    // create a dropdown menu for changing the status of the task 
+    var statusSelectEl = document.createElement("select");
+    statusSelectEl.className = "select-status";
+    statusSelectEl.setAttribute("name", "status-change");
+    statusSelectEl.setAttribute("data-task-id", taskId);
+
+    var statusChoices = ["To Do", "In Progress", "Completed"];
+
+    //for loop to generate the three different options for the <select> element
+    for (var i = 0; i < statusChoices.length; i++) {
+        var statusOptionEl = document.createElement("option");
+        statusOptionEl.textContent = statusChoices[i];
+        statusOptionEl.setAttribute("value", statusChoices[i]);
+
+        // append to the <select> element
+        statusSelectEl.appendChild(statusOptionEl);
+    }
+
+
+    //append the newly created dropdown menu to the actionContainerEl
+    actionContainerEl.appendChild(statusSelectEl);
+
+    return actionContainerEl;
+};
 
 
 formEl.addEventListener("submit", taskFormHandler);
