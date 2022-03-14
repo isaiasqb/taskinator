@@ -2,6 +2,8 @@ var taskIdCounter = 0;
 var formEl = document.querySelector("#task-form")
 var pageContentEl = document.querySelector("#page-content"); //this selects the main area where the 3 lists containers are
 var tasksToDoEl = document.querySelector("#tasks-to-do");
+var tasksInProgressEl = document.querySelector("#tasks-in-progress");
+var tasksCompletedEl = document.querySelector("#tasks-completed");
 
 
 var taskFormHandler = function (event){
@@ -175,9 +177,37 @@ var deleteTask = function(taskId) {
     taskSelected.remove();
 };
 
+var taskStatusChangeHandler = function (event){
+    // console.log(event.target); // logs the object that triggered the "change", in this case the <select> element
+    // console.log(event.target.getAttribute("data-task-id")); //logs the value of the task-id form the changed task
+
+    // get the task item's id
+    var taskId = event.target.getAttribute("data-task-id");
+
+    // get the current selected status' value and convert to lowercase
+    var statusValue = event.target.value.toLowerCase();
+
+    // find the parent task item element based on the id
+    var taskSelected = document.querySelector(".task-item[data-task-id='" +taskId+ "']");
+    
+    //change the location of the task based on the status selected
+    if (statusValue === "to do") {
+        tasksToDoEl.appendChild(taskSelected);
+    }
+    else if (statusValue === "in progress") {
+        tasksInProgressEl.appendChild(taskSelected);
+    }
+    else if (statusValue === "completed") {
+        tasksCompletedEl.appendChild(taskSelected);
+    }
+};
+
 
 
 // this targets the main area where the 3 lists are contained
 pageContentEl.addEventListener("click", taskButtonHandler);
+
+// tracks any changes on the form, for example, when you change the status of the <select> item
+pageContentEl.addEventListener("change", taskStatusChangeHandler);
 
 
