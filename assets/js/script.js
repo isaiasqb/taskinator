@@ -57,6 +57,9 @@ var completeEditTask = function (taskName, taskType, taskId) {
         }
     };
 
+    // saves data inside localStorage
+    saveTasks();
+
     alert("Task Updated!");
 
     // reset the form by removing the task id and changing the button text back to normal
@@ -89,6 +92,9 @@ var createTaskEl = function(taskDataObj) {
     taskDataObj.id = taskIdCounter;
 
     tasks.push(taskDataObj);
+
+    //saves the data onto the localStorage
+    saveTasks();
 
     // increase the task counter for the next uique id
     taskIdCounter++;
@@ -205,6 +211,9 @@ var deleteTask = function(taskId) {
 
     //reasign tasks array to be the same as updatedTaskArr
     tasks = updatedTaskArr;
+
+    // saves data inside localStorage
+    saveTasks();
 };
 
 var taskStatusChangeHandler = function (event){
@@ -238,8 +247,16 @@ var taskStatusChangeHandler = function (event){
         }
         console.log(tasks);
     }
+
+    // saves data inside localStorage
+    saveTasks();
 };
 
+
+// saving tasks to localStorage, function will every time we add, update, or delete any tasks.
+var saveTasks = function () {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+};
 
 
 // this targets the main area where the 3 lists are contained
