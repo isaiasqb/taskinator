@@ -258,9 +258,28 @@ var saveTasks = function () {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
+var loadTask = function () {
+    
+    var savedTasks = localStorage.getItem('tasks');
+
+    if (!savedTasks){
+        return false;
+    }
+
+    savedTasks = JSON.parse(savedTasks);
+
+    // loop through savedTasks array
+    for (var i = 0; i < savedTasks.length; i++) {
+        //pass each task object into the 'createTaskEl()' function
+        createTaskEl(savedTasks[i]);
+    }
+};
+
 
 // this targets the main area where the 3 lists are contained
 pageContentEl.addEventListener("click", taskButtonHandler);
 
 // tracks any changes on the form, for example, when you change the status of the <select> item
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
+
+loadTask();
