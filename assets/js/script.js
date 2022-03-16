@@ -1,9 +1,12 @@
 var taskIdCounter = 0;
+
 var formEl = document.querySelector("#task-form")
 var pageContentEl = document.querySelector("#page-content"); //this selects the main area where the 3 lists containers are
 var tasksToDoEl = document.querySelector("#tasks-to-do");
 var tasksInProgressEl = document.querySelector("#tasks-in-progress");
 var tasksCompletedEl = document.querySelector("#tasks-completed");
+
+// an array to hold tasks for saving
 var tasks = [];
 
 
@@ -85,9 +88,23 @@ var createTaskEl = function(taskDataObj) {
     // this variable holds the creation of the "div" that contains the task actions 
     var taskActionsEl = createTaskActions(taskIdCounter);
     listItemEl.appendChild(taskActionsEl);
-
-    // add the entire list item to the ul
-    tasksToDoEl.appendChild(listItemEl);
+    
+    switch (taskDataObj.status) {
+        case "to do":
+            taskActionsEl.querySelector("select[name='status-change']").selectedIndex = 0;
+            tasksToDoEl.appendChild(listItemEl);
+            break;
+        case "in progress":
+            taskActionsEl.querySelector("select[name='status-change']").selectedIndex = 1;
+            tasksInProgressEl.appendChild(listItemEl);
+            break;
+        case "completed":
+            taskActionsEl.querySelector("select[name='status-change']").selectedIndex = 2;
+            tasksCompletedEl.appendChild(listItemEl);
+            break;
+        default:
+            console.log("something went wrong");
+    };
 
     taskDataObj.id = taskIdCounter;
 
@@ -113,27 +130,25 @@ var createTaskActions = function(taskId) {
     editButtonEl.textContent = "Edit";
     editButtonEl.className = "btn edit-btn";
     editButtonEl.setAttribute("data-task-id", taskId);
-
     actionContainerEl.appendChild(editButtonEl);
-
     // create a button for deleting the task & append it to the actionContainerEl
     var deleteButtonEl = document.createElement("button");
     deleteButtonEl.textContent = "Delete";
     deleteButtonEl.className = "btn delete-btn";
     deleteButtonEl.setAttribute("data-task-id", taskId);
-
     actionContainerEl.appendChild(deleteButtonEl);
-
     // create a dropdown menu for changing the status of the task 
     var statusSelectEl = document.createElement("select");
     statusSelectEl.className = "select-status";
     statusSelectEl.setAttribute("name", "status-change");
     statusSelectEl.setAttribute("data-task-id", taskId);
-
+    actionContainerEl.appendChild(statusSelectEl);
+    // create status options
     var statusChoices = ["To Do", "In Progress", "Completed"];
 
     //for loop to generate the three different options for the <select> element
     for (var i = 0; i < statusChoices.length; i++) {
+        // create the <option> elements to go inside the <select> element
         var statusOptionEl = document.createElement("option");
         statusOptionEl.textContent = statusChoices[i];
         statusOptionEl.setAttribute("value", statusChoices[i]);
@@ -142,15 +157,9 @@ var createTaskActions = function(taskId) {
         statusSelectEl.appendChild(statusOptionEl);
     }
 
-
-    //append the newly created dropdown menu to the actionContainerEl
-    actionContainerEl.appendChild(statusSelectEl);
-
     return actionContainerEl;
 };
 
-
-formEl.addEventListener("submit", taskFormHandler); //this targets the submit action of the forms button 
 
 // function to be triggered by clicking the main content area only if the element clicked on is a button from an individual task
 var taskButtonHandler = function(event) {
@@ -164,7 +173,7 @@ var taskButtonHandler = function(event) {
     }
 
     // delete button was clicked
-    if (targetEl.matches(".delete-btn")) {
+    else if (targetEl.matches(".delete-btn")) {
         // get element's task id
         var taskId = targetEl.getAttribute("data-task-id");
         deleteTask(taskId); 
@@ -275,6 +284,9 @@ var loadTask = function () {
     }
 };
 
+
+//creates a ner task, this targets the submit action of the forms button 
+formEl.addEventListener("submit", taskFormHandler); 
 
 // this targets the main area where the 3 lists are contained
 pageContentEl.addEventListener("click", taskButtonHandler);
